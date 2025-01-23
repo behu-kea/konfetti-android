@@ -42,24 +42,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge();
 
-        val viewModel: TimerViewModel by viewModels()
-
-        runBlocking {
-            delay(2000)
-            viewModel.textToChange = "efter ændring"
-        }
-
-        lifecycleScope.launch {
-            println("before delay")
-            delay(2000)
-            viewModel.textToChange = "efter ændring"
-            println("After delay")
-        }
-
         setContent {
             ConfettitimerTheme {
-                Text(viewModel.textToChange)
-
                 ConfettiApp()
             }
         }
