@@ -24,8 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import com.example.confetti_timer.ui.theme.ConfettitimerTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -39,6 +42,7 @@ import kotlin.concurrent.timerTask
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge();
 
@@ -61,11 +65,15 @@ fun ConfettiApp() {
         // Our Button to trigger confetti
         Button(
             onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    //delay(4000) // 4 seconds delay
+                    println("Button clicked after 4 seconds")
+                    confettiKey++
+                }
                 // Trigger the confetti by incrementing the key
-                confettiKey++
             }
         ) {
-            Text("Spray Confetti!")
+            Text("Spray Confetti! hahahah")
         }
 
         // Force re-initialization of KonfettiView whenever confettiKey changes
