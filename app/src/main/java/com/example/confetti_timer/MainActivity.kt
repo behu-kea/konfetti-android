@@ -14,18 +14,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.confetti_timer.ui.theme.ConfettitimerTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -36,36 +40,40 @@ import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.Timer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge();
+        enableEdgeToEdge()
 
         setContent {
+            val confettiViewModel = viewModel<ConfettiViewModel>()
+
             ConfettitimerTheme {
-                ConfettiApp()
+                ConfettiApp(
+                    confettiViewModel.confettiKey,
+                    confettiViewModel::onButtonClicked
+                )
             }
         }
     }
 }
 
 @Composable
-fun ConfettiApp() {
-    var confettiKey by remember { mutableStateOf(0) }
-
+fun ConfettiApp(confettiKey: Int, onButtonClicked: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Our Button to trigger confetti
-        Button(
-            onClick = {
-                // Trigger the confetti by incrementing the key
-                confettiKey++
+        Column {
+            // Our Button to trigger confetti
+            Button(
+                onClick = onButtonClicked
+            ) {
+                Text("Spray Confetti!")
             }
-        ) {
-            Text("Spray Confetti!")
         }
 
         // Force re-initialization of KonfettiView whenever confettiKey changes
