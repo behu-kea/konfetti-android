@@ -47,6 +47,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        lifecycleScope.launch(Dispatchers.IO) {
+
+        }
 
         setContent {
             val confettiViewModel = viewModel<ConfettiViewModel>()
@@ -54,7 +57,9 @@ class MainActivity : ComponentActivity() {
             ConfettitimerTheme {
                 ConfettiApp(
                     confettiViewModel.confettiKey,
-                    confettiViewModel::onButtonClicked
+                    confettiViewModel.timeToWait,
+                    confettiViewModel::onButtonClicked,
+                    confettiViewModel::onTimeChanged,
                 )
             }
         }
@@ -62,7 +67,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ConfettiApp(confettiKey: Int, onButtonClicked: () -> Unit) {
+fun ConfettiApp(confettiKey: Int, timeToWait: Int, onButtonClicked: () -> Unit, onTimeChanged: (String) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -74,7 +79,10 @@ fun ConfettiApp(confettiKey: Int, onButtonClicked: () -> Unit) {
             ) {
                 Text("Spray Confetti!")
             }
+
+            TextField(onValueChange = onTimeChanged, value = timeToWait.toString())
         }
+
 
         // Force re-initialization of KonfettiView whenever confettiKey changes
         key(confettiKey) {
